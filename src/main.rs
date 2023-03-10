@@ -20,7 +20,11 @@ use {
     },
     tui::{
         Terminal,
-        backend::CrosstermBackend,
+        Frame,
+        backend::{
+            CrosstermBackend,
+            Backend
+        },
         widgets::{
             Wrap,
             Paragraph,
@@ -84,9 +88,31 @@ fn close_ui(mut terminal: Terminal<CrosstermBackend<Stdout>>) -> Result<(), Erro
     Ok(())
 }
 
-fn quit(terminal: Terminal<CrosstermBackend<Stdout>>) {
+fn quit(terminal: &mut Terminal<CrosstermBackend<Stdout>>) {
     close_ui(terminal).unwrap();
     // TODO quit programm
+}
+
+fn frame<B: Backend>(f: &mut Frame<B>) {
+
+}
+
+fn run_sc<B: Backend>(terminal: &mut Terminal<B>, sc: &mut Sc) -> Result<()> {
+    loop {
+        terminal.draw(|f| frame(f))?;
+
+        if crossterm::event::poll(timeout)? {
+            if let Event::Key(key) = event::read()? {
+                if let KeyCode::Char('q') = key.code {
+                    return Ok(());
+                }
+            }
+        }
+    }
+}
+
+fn get_sc(args: Args) -> &mut Sc {
+
 }
 
 fn main() -> Result<(), Error> {
@@ -96,15 +122,6 @@ fn main() -> Result<(), Error> {
     execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
     let backend      = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
-
-    /*
-    terminal.draw(|f| {
-        let size = f.size();
-        let block = Block::default()
-            .borders(Borders::ALL);
-        f.render_widget(block, size);
-    })?;
-    */
 
     let _commands: Vec<Command> = vec![
         Command {
@@ -116,6 +133,7 @@ fn main() -> Result<(), Error> {
     let mut input: [u8; 1]     = [0];
     let stdin                  = stdin();
 
+
     let mut handle = stdin.lock();
     handle.read_exact(&mut input)?;
     let ascii: String = input[0].to_string();
@@ -124,40 +142,7 @@ fn main() -> Result<(), Error> {
 
 
 
-    terminal.draw(|f| {
-        let block = Block::default()
-            .borders(Borders::ALL)
-            .title(ascii)        
-            .title_alignment(Alignment::Center);
-        let size = f.size();
 
-        /*
-        let block2 = Block::default()
-            .borders(Borders::ALL)
-            .style(
-                Style::default()
-                    .fg(Color::Red)
-                    .add_modifier(Modifier::BOLD)
-            );
-        */
-        // let current = f.size();
-        /*
-        let size2 = Rect::new(
-            current.x / 2 - 4,
-            current.y / 2 - 8,
-            // 3,
-            // 3,
-            8,
-            4
-        );
-        */
-        f.render_widget(block, size);
-    })?;
-
-    // terminal.draw(|f|{});
-
-    // let mut frame = terminal.get_frame();
-      // let frame     = terminal.get_frame();
     terminal.flush()?;
 
     let mut frame = terminal.get_frame();
@@ -165,7 +150,7 @@ fn main() -> Result<(), Error> {
     let paragraph = Paragraph::new("text");
     let area      = Rect::new(5, 3, 8, 3);
     frame.render_widget(paragraph, area);
-    terminal.draw(|frame|{});
+    terminal.draw(|frame|{})?;
     thread::sleep(Duration::from_millis(1000));
 
     /*

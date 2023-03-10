@@ -51,6 +51,7 @@ pub struct Shortcurt {
 
 
 pub enum LangFunc {
+
     Rust(fn(terminal: Terminal<CrosstermBackend<Stdout>>) -> ()),
     Lua(fn(terminal: Terminal<CrosstermBackend<Stdout>>) -> ())
 }
@@ -61,3 +62,7 @@ pub struct Command {
     pub sc:     Option<Shortcurt>
 }
 
+
+pub struct Sc {
+    pub command: Command
+}
