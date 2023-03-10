@@ -116,16 +116,13 @@ fn main() -> Result<(), Error> {
     let backend      = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
-    let _sc: Sc =
-        Sc {
-
-                command: Command {
-                    name: "q".to_string(),
-                    func: LangFunc::Rust(quit),
-                    sc  : None
-                }
-
-        };
+    let _sc: Sc = Sc {
+        command: Command {
+            name: "q".to_string(),
+            func: LangFunc::Rust(quit),
+            sc  : None
+        }
+    };
     let mut input: [u8; 1]     = [0];
     let stdin                  = stdin();
 
