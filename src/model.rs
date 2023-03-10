@@ -52,14 +52,14 @@ pub struct Shortcurt {
 
 pub enum LangFunc {
 
-    Rust(fn(terminal: Terminal<CrosstermBackend<Stdout>>) -> ()),
-    Lua(fn(terminal: Terminal<CrosstermBackend<Stdout>>) -> ())
+    Rust(fn(terminal: &mut Terminal<CrosstermBackend<Stdout>>) -> ()),
+    Lua(fn(terminal: &mut Terminal<CrosstermBackend<Stdout>>) -> ())
 }
 
 pub struct Command {
-    pub name:   std::string::String,
-    pub func:   LangFunc,
-    pub sc:     Option<Shortcurt>
+    name:   std::string::String,
+    func:   LangFunc,
+    sc:     Option<Shortcurt>
 }
 
 
